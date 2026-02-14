@@ -1,0 +1,588 @@
+/* ===== GLOBAL RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #1a0a0a;
+    font-family: 'Lora', serif;
+    cursor: default;
+    user-select: none;
+}
+
+/* ===== FALLING CANVAS ===== */
+#fallingCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* ===== MUSIC TOGGLE ===== */
+#music-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-size: 24px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+#music-toggle:hover {
+    transform: scale(1.15);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+#music-toggle.muted {
+    opacity: 0.5;
+}
+
+/* ===== SCREENS ===== */
+.screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 1s ease;
+    will-change: opacity;
+    transform: translateZ(0);
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+}
+
+.screen-content {
+    text-align: center;
+    padding: 40px;
+    max-width: 800px;
+    width: 90%;
+    position: relative;
+    z-index: 3;
+}
+
+/* ===== SCREEN 1: TITLE ===== */
+#screen1 {
+    background: radial-gradient(ellipse at center, rgba(45,10,30,0.88) 0%, rgba(26,5,16,0.85) 50%, rgba(13,2,8,0.82) 100%);
+}
+
+.title-animate {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    color: #ff6b9d;
+    text-shadow: 
+        0 0 20px rgba(255, 107, 157, 0.5),
+        0 0 40px rgba(255, 107, 157, 0.3),
+        0 0 80px rgba(255, 107, 157, 0.15);
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+    animation: titleAppear 2s ease-out 0.5s forwards;
+    line-height: 1.3;
+}
+
+@keyframes titleAppear {
+    0% { opacity: 0; transform: translateY(30px) scale(0.9); }
+    60% { opacity: 1; transform: translateY(-5px) scale(1.02); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.subtitle-animate {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.6rem);
+    color: #e8a0b8;
+    margin-top: 30px;
+    opacity: 0;
+    transform: translateY(20px);
+    line-height: 1.6;
+    text-shadow: 0 0 15px rgba(232, 160, 184, 0.3);
+}
+
+.subtitle-animate.show {
+    animation: subtitleAppear 1.5s ease-out forwards;
+}
+
+@keyframes subtitleAppear {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== CLICK HINTS ===== */
+.click-hint {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: rgba(255, 182, 206, 0.6);
+    margin-top: 40px;
+    opacity: 0;
+    animation: pulse 2s ease-in-out infinite;
+    letter-spacing: 2px;
+}
+
+.click-hint.show {
+    opacity: 1;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.03); }
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ===== SCREEN 2 & 3: POEM / LETTER ===== */
+#screen2, #screen3, #screen5 {
+    background: radial-gradient(ellipse at center, rgba(45,10,30,0.82) 0%, rgba(26,5,16,0.78) 50%, rgba(13,2,8,0.75) 100%);
+}
+
+.poem-screen {
+    max-width: 750px;
+}
+
+.poem-container {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 20px 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 107, 157, 0.3) transparent;
+    background: rgba(13, 2, 8, 0.45);
+    border-radius: 12px;
+    backdrop-filter: blur(2px);
+    scroll-behavior: smooth;
+}
+
+.poem-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+.poem-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.poem-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 107, 157, 0.3);
+    border-radius: 10px;
+}
+
+.poem-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(0.95rem, 2vw, 1.2rem);
+    color: #f4a0c0;
+    line-height: 2;
+    text-align: left;
+    text-shadow: 0 0 10px rgba(244, 160, 192, 0.2);
+    white-space: pre-wrap;
+}
+
+.poem-text .poem-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: #ff6b9d;
+    text-align: center;
+    display: block;
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+}
+
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background: #ff6b9d;
+    margin-left: 3px;
+    vertical-align: text-bottom;
+    animation: cursorBlink 1s ease-in-out infinite;
+    will-change: opacity;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.15; }
+}
+
+/* ===== SCREEN 4: VALENTINE QUESTION ===== */
+#screen4 {
+    background: radial-gradient(ellipse at center, rgba(45,10,30,0.85) 0%, rgba(26,5,16,0.82) 50%, rgba(13,2,8,0.78) 100%);
+}
+
+.valentine-question {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.question-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #ff6b9d;
+    text-shadow: 
+        0 0 20px rgba(255, 107, 157, 0.5),
+        0 0 40px rgba(255, 107, 157, 0.3);
+    margin-bottom: 50px;
+    line-height: 1.4;
+    opacity: 0;
+    animation: titleAppear 1.5s ease-out 0.3s forwards;
+}
+
+.button-container {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    perspective: 1000px;
+}
+
+.btn {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 18px 50px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    z-index: 10;
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.yes-btn {
+    background: linear-gradient(135deg, #00c853, #00e676, #69f0ae);
+    color: #fff;
+    box-shadow: 0 6px 25px rgba(0, 200, 83, 0.4), 0 0 40px rgba(0, 200, 83, 0.15);
+}
+
+.yes-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 8px 35px rgba(0, 200, 83, 0.5), 0 0 60px rgba(0, 200, 83, 0.25);
+}
+
+.no-btn {
+    background: linear-gradient(135deg, #ff1744, #ff5252, #ff8a80);
+    color: #fff;
+    box-shadow: 0 6px 25px rgba(255, 23, 68, 0.4), 0 0 40px rgba(255, 23, 68, 0.15);
+}
+
+.no-btn:hover {
+    transform: scale(1.05);
+}
+
+/* ===== SCREEN 5: FINAL MESSAGE ===== */
+/* Uses same poem-screen styles */
+
+/* ===== SCREEN 6: CURTAIN ===== */
+.curtain-screen {
+    z-index: 100;
+    display: none;
+    opacity: 0;
+    background: transparent;
+}
+
+.curtain-screen.active {
+    display: flex;
+    opacity: 1;
+}
+
+.curtain {
+    position: fixed;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 101;
+    overflow: hidden;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.curtain-left {
+    left: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(135deg, #6b0025 0%, #8b0030 25%, #c41050 50%, #8b0030 75%, #6b0025 100%);
+    transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: inset -30px 0 60px rgba(0,0,0,0.35), 5px 0 30px rgba(0,0,0,0.4);
+}
+
+.curtain-right {
+    right: 0;
+    transform: translateX(100%);
+    background: linear-gradient(225deg, #6b0025 0%, #8b0030 25%, #c41050 50%, #8b0030 75%, #6b0025 100%);
+    transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: inset 30px 0 60px rgba(0,0,0,0.35), -5px 0 30px rgba(0,0,0,0.4);
+}
+
+.curtain-screen.closing .curtain-left {
+    transform: translateX(0);
+}
+
+.curtain-screen.closing .curtain-right {
+    transform: translateX(0);
+}
+
+.curtain-pattern {
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(255,107,157,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 40%, rgba(255,107,157,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 70%, rgba(255,107,157,0.12) 0%, transparent 50%),
+        radial-gradient(circle at 70% 90%, rgba(255,107,157,0.08) 0%, transparent 50%);
+    position: relative;
+    overflow: hidden;
+}
+
+.curtain-pattern::before {
+    content: '❤️ 🌹 ❤️ 💕 🌹 ❤️ 💖 🌹 ❤️ 💕 🌹 ❤️ 💖 🌹 ❤️ 💕 🌹 ❤️ 💖 🌹 ❤️';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 220%;
+    height: 220%;
+    font-size: 2rem;
+    line-height: 3;
+    word-spacing: 20px;
+    letter-spacing: 20px;
+    opacity: 0;
+    transform: rotate(-15deg);
+    pointer-events: none;
+    transition: opacity 2s ease 1.5s;
+    animation: patternFloat 6s ease-in-out infinite;
+    will-change: transform, opacity;
+}
+
+.curtain-screen.closing .curtain-pattern::before {
+    opacity: 0.25;
+}
+
+@keyframes patternFloat {
+    0%, 100% { transform: rotate(-15deg) translate(0, 0); }
+    25% { transform: rotate(-15deg) translate(-5px, -8px); }
+    50% { transform: rotate(-15deg) translate(-10px, -10px); }
+    75% { transform: rotate(-15deg) translate(-5px, -3px); }
+}
+
+.curtain-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    z-index: 103;
+    opacity: 0;
+    transition: opacity 2s ease 2.5s, transform 2s cubic-bezier(0.22, 1, 0.36, 1) 2.5s;
+    will-change: opacity, transform;
+}
+
+.curtain-screen.closing .curtain-message {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.curtain-message span {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    color: #ffb6ce;
+    text-shadow: 
+        0 0 30px rgba(255, 182, 206, 0.6),
+        0 0 60px rgba(255, 182, 206, 0.3),
+        0 0 100px rgba(255, 107, 157, 0.15);
+    animation: messageGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes messageGlow {
+    0% { text-shadow: 0 0 30px rgba(255,182,206,0.6), 0 0 60px rgba(255,182,206,0.3), 0 0 100px rgba(255,107,157,0.15); }
+    100% { text-shadow: 0 0 40px rgba(255,182,206,0.8), 0 0 80px rgba(255,182,206,0.4), 0 0 120px rgba(255,107,157,0.25); }
+}
+
+/* ===== TRANSITION OVERLAY ===== */
+.transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+    pointer-events: none;
+    display: none;
+    background: radial-gradient(ellipse at center, rgba(45,10,30,0.9) 0%, rgba(13,2,8,0.92) 100%);
+    opacity: 0;
+}
+
+.transition-overlay.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+    animation: transitionFade 1.4s ease-in-out forwards;
+}
+
+@keyframes transitionFade {
+    0% { opacity: 0; }
+    30% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.transition-hearts {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.transition-hearts span {
+    font-size: 2.5rem;
+    opacity: 0;
+    animation: heartPop 1.8s ease-in-out forwards;
+}
+
+.transition-hearts span:nth-child(1) { animation-delay: 0.05s; }
+.transition-hearts span:nth-child(2) { animation-delay: 0.12s; }
+.transition-hearts span:nth-child(3) { animation-delay: 0.19s; }
+.transition-hearts span:nth-child(4) { animation-delay: 0.26s; }
+.transition-hearts span:nth-child(5) { animation-delay: 0.33s; }
+.transition-hearts span:nth-child(6) { animation-delay: 0.40s; }
+.transition-hearts span:nth-child(7) { animation-delay: 0.47s; }
+.transition-hearts span:nth-child(8) { animation-delay: 0.54s; }
+.transition-hearts span:nth-child(9) { animation-delay: 0.61s; }
+.transition-hearts span:nth-child(10) { animation-delay: 0.68s; }
+
+@keyframes heartPop {
+    0% { opacity: 0; transform: scale(0) rotate(-20deg); }
+    30% { opacity: 1; transform: scale(1.3) rotate(10deg); }
+    50% { opacity: 1; transform: scale(1) rotate(0deg); }
+    80% { opacity: 1; transform: scale(1.1) rotate(-5deg); }
+    100% { opacity: 0; transform: scale(0.5) rotate(10deg) translateY(-30px); }
+}
+
+/* ===== PARTICLE BURST (for Yes click) ===== */
+.heart-burst {
+    position: fixed;
+    font-size: 1.5rem;
+    z-index: 200;
+    pointer-events: none;
+    animation: burstAnim 1.5s ease-out forwards;
+    will-change: transform, opacity;
+}
+
+@keyframes burstAnim {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3) rotate(360deg); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    .screen-content {
+        padding: 25px 20px;
+    }
+    
+    .poem-container {
+        max-height: 65vh;
+        padding: 15px 5px;
+    }
+
+    .poem-text {
+        font-size: 0.9rem;
+        line-height: 1.85;
+    }
+
+    .button-container {
+        gap: 20px;
+    }
+
+    .btn {
+        padding: 15px 40px;
+        font-size: 1.1rem;
+    }
+}
+
+/* ===== AMBIENT GLOW ===== */
+#screen1::before, #screen2::before, #screen3::before, #screen4::before, #screen5::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 600px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255, 50, 100, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: ambientGlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes ambientGlow {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+    100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
+/* Floating rose petals background decoration */
+#screen1::after, #screen2::after, #screen3::after, #screen4::after, #screen5::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+        radial-gradient(2px 2px at 10% 20%, rgba(255, 107, 157, 0.3), transparent),
+        radial-gradient(2px 2px at 30% 60%, rgba(255, 107, 157, 0.2), transparent),
+        radial-gradient(2px 2px at 50% 80%, rgba(255, 182, 206, 0.25), transparent),
+        radial-gradient(2px 2px at 70% 30%, rgba(255, 107, 157, 0.2), transparent),
+        radial-gradient(2px 2px at 90% 70%, rgba(255, 182, 206, 0.3), transparent),
+        radial-gradient(3px 3px at 15% 85%, rgba(255, 107, 157, 0.15), transparent),
+        radial-gradient(3px 3px at 85% 15%, rgba(255, 182, 206, 0.15), transparent);
+    pointer-events: none;
+    animation: sparkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes sparkle {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+}

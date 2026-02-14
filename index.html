@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Valentine's Day ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Falling Hearts & Roses Canvas -->
+    <canvas id="fallingCanvas"></canvas>
+
+    <!-- Background Music (optional) -->
+    <div id="music-toggle" title="Toggle Music">🎵</div>
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/audio/2024/11/04/audio_4956b4ece1.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- SCREEN 1: Title Screen -->
+    <div id="screen1" class="screen active">
+        <div class="screen-content">
+            <h1 id="title1" class="title-animate">Today is 14th of Feb 2026</h1>
+            <p id="subtitle1" class="subtitle-animate hidden">3 years of our love, commitment, fights, everything.</p>
+            <p id="clickHint1" class="click-hint hidden">~ click anywhere to continue ~</p>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: Poem -->
+    <div id="screen2" class="screen">
+        <div class="screen-content poem-screen">
+            <div id="poemContainer" class="poem-container">
+                <div id="poemText" class="poem-text"></div>
+            </div>
+            <p id="clickHint2" class="click-hint hidden">~ click anywhere to continue ~</p>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: Love Letter -->
+    <div id="screen3" class="screen">
+        <div class="screen-content poem-screen">
+            <div id="letterContainer" class="poem-container">
+                <div id="letterText" class="poem-text"></div>
+            </div>
+            <p id="clickHint3" class="click-hint hidden">~ click anywhere to continue ~</p>
+        </div>
+    </div>
+
+    <!-- SCREEN 4: Valentine Question -->
+    <div id="screen4" class="screen">
+        <div class="screen-content valentine-question">
+            <div class="hearts-border"></div>
+            <h1 id="questionTitle" class="question-title">Would you like to be my Valentine forever Jaanu? 💕</h1>
+            <div class="button-container" id="buttonContainer">
+                <button id="yesBtn" class="btn yes-btn" onclick="handleYes()">Yes 💖</button>
+                <button id="noBtn" class="btn no-btn" onclick="handleNo()">No 💔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 5: Final Message -->
+    <div id="screen5" class="screen">
+        <div class="screen-content poem-screen">
+            <div id="finalContainer" class="poem-container">
+                <div id="finalText" class="poem-text"></div>
+            </div>
+            <p id="clickHint5" class="click-hint hidden">~ click to close ~</p>
+        </div>
+    </div>
+
+    <!-- SCREEN 6: Curtain Close -->
+    <div id="screen6" class="screen curtain-screen">
+        <div class="curtain curtain-left">
+            <div class="curtain-pattern"></div>
+        </div>
+        <div class="curtain curtain-right">
+            <div class="curtain-pattern"></div>
+        </div>
+        <div class="curtain-message">
+            <span>Forever Yours ❤️</span>
+        </div>
+    </div>
+
+    <!-- Transition Overlay -->
+    <div id="transition" class="transition-overlay">
+        <div class="transition-hearts">
+            <span>❤️</span><span>💕</span><span>💖</span><span>💗</span><span>💝</span>
+            <span>🌹</span><span>❤️</span><span>💕</span><span>💖</span><span>💗</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
