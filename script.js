@@ -17,15 +17,30 @@ const ctx      = canvas.getContext('2d');
 const bgMusic     = document.getElementById('bgMusic');
 const musicToggle = document.getElementById('music-toggle');
 let musicPlaying  = false;
+let musicStarted  = false;
+
+function startMusic() {
+    if (musicStarted) return;
+    bgMusic.volume = 0.4;
+    bgMusic.play().then(() => {
+        musicPlaying = true;
+        musicStarted = true;
+        musicToggle.textContent = '🎵';
+        musicToggle.classList.remove('muted');
+    }).catch(() => {});
+}
 
 musicToggle.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (!musicStarted) {
+        startMusic();
+        return;
+    }
     if (musicPlaying) {
         bgMusic.pause();
         musicToggle.classList.add('muted');
         musicToggle.textContent = '🔇';
     } else {
-        bgMusic.volume = 0.3;
         bgMusic.play().catch(() => {});
         musicToggle.classList.remove('muted');
         musicToggle.textContent = '🎵';
@@ -291,15 +306,8 @@ document.addEventListener('click', (e) => {
     if (e.target.closest('.btn') || e.target.closest('#music-toggle')) return;
     if (transitioning) return;
 
-    // Try to start music on first interaction
-    if (!musicPlaying) {
-        bgMusic.volume = 0.3;
-        bgMusic.play().then(() => {
-            musicPlaying = true;
-            musicToggle.textContent = '🎵';
-            musicToggle.classList.remove('muted');
-        }).catch(() => {});
-    }
+    // Auto-start music on first interaction
+    startMusic();
 
     switch (currentScreen) {
         case 1: handleScreen1Click(); break;
